@@ -18,7 +18,8 @@ import login
 
 FILENAME_PATTERNS = [
     '/var/www/content/Aufnahmen/aufnahme_fertig_*.mp3',
-    '/var/www/content/Aufnahmen/aufnahme_fertig_*.m4a'
+    '/var/www/content/Aufnahmen/aufnahme_fertig_*.m4a',
+    '/var/www/content/Aufnahmen/aufnahme_fertig_*.aac'
 ]
 DATE_TIME_FORMAT = '%Y_%m_%d_%H_%M_%S'
 PODCAST_IMG_PATH = '/var/www/content/img/podcast/'
@@ -32,7 +33,7 @@ def audio_length(filename):
 
     if extension == '.mp3':
         audio = MP3(filename)
-    elif extension == '.m4a':
+    elif extension in ['.m4a', '.aac']:
         audio = MP4(filename)
     else:
         raise ValueError('Unsupported file format: {}'.format(extension))
@@ -102,7 +103,7 @@ def add_metadata_tags(path, station, station_alias, recording_time):
         )
         audio.save(v2_version=3)
 
-    elif extension == '.m4a':
+    elif extension in ['.m4a', '.aac']:
         # MP4 tags for M4A/AAC
         audio = MP4(path)
         audio['\xa9nam'] = title  # Title

@@ -11,7 +11,8 @@ import login
 
 FILENAME_PATTERNS = [
     '/var/www/content/Aufnahmen/*.mp3',
-    '/var/www/content/Aufnahmen/*.m4a'
+    '/var/www/content/Aufnahmen/*.m4a',
+    '/var/www/content/Aufnahmen/*.aac'
 ]
 PATH_RECORDINGS = '/var/www/content/Aufnahmen/'
 

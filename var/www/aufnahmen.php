@@ -163,7 +163,7 @@
                     // Determine file type for display
                     $file_extension = strtolower(pathinfo($row->datei, PATHINFO_EXTENSION));
                     $format_badge = "";
-                    if ($file_extension == "m4a") {
+                    if ($file_extension == "m4a" || $file_extension == "aac") {
                         $format_badge = " <span style=\"font-size:0.8em; color:#666;\">[AAC]</span>";
                     } elseif ($file_extension == "mp3") {
                         $format_badge = " <span style=\"font-size:0.8em; color:#666;\">[MP3]</span>";
