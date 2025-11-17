@@ -106,7 +106,7 @@
                 unset($_POST);
                 }
 
-            $version_url = "https://raw.githubusercontent.com/moppi4483/radiobeere/master/var/www/version.txt";
+            $version_url = "https://raw.githubusercontent.com/caveman99/radiobeere/master/var/www/version.txt";
             $version_remote = file_get_contents($version_url);
             $version_file = fopen("version.txt","r");
             $version_local = fgets($version_file);

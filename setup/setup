@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Dynamisch ermitteltes Installationsverzeichnis
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+INSTALL_DIR="$(dirname "$SCRIPT_DIR")"
+
 # Install packages via package manager
 
 apt-get --yes install rename samba-common samba apache2 php mariadb-server php-mysql \
@@ -22,12 +26,12 @@ read fqdn
 
 if[$fqdn != ""]
 then
-  cd /home/pi/radiobeere/var/www
+  cd "$INSTALL_DIR/var/www"
   sed 's/gethostname()/"'$fqdn'"/g' podcast.php > temp_file
   mv temp_file podcast.php
   chmod 644 podcast.php
-  
-  cd /home/pi/radiobeere
+
+  cd "$INSTALL_DIR"
   sed 's/socket.gethostname()/"'$fqdn'"/g' podcast.py > temp_file
   mv temp_file podcast.py
   chmod 755 podcast.py
@@ -48,7 +52,7 @@ else
   read password
 fi
 
-cd /home/pi/radiobeere/setup
+cd "$INSTALL_DIR/setup"
 sed 's/password/'$password'/g' radiobeere.sql > temp_file
 mv temp_file radiobeere.sql
 
@@ -82,12 +86,12 @@ chmod 777 /var/www/img/podcast
 
 # Link web root to RadioBeere directory
 
-echo "/var/www /home/pi/radiobeere/var/www none bind 0 0" >> /etc/fstab
+echo "/var/www $INSTALL_DIR/var/www none bind 0 0" >> /etc/fstab
 mount -al
 
 # Declare changed files as unchanged to git
 
-cd /home/pi/radiobeere
+cd "$INSTALL_DIR"
 git update-index --assume-unchanged login.py
 git update-index --assume-unchanged setup/radiobeere.sql
 git update-index --assume-unchanged var/www/include/db-connect.php
@@ -143,9 +147,9 @@ mv temp_file /etc/minidlna.conf
 # Add cronjobs
 
 cat >> /etc/crontab << EOF
-15 0 * * * root /home/pi/radiobeere/setup/update-system >> /var/www/dist-upgrade.log 2>&1 ; /home/pi/radiobeere/setup/shorten-log
-0 0 * * * root /home/pi/radiobeere/rb-timer-update.py > /dev/null 2>&1
-5 0 * * * root /home/pi/radiobeere/rb-rec-cleanup.py > /dev/null 2>&1
+15 0 * * * root $INSTALL_DIR/setup/update-system >> /var/www/dist-upgrade.log 2>&1 ; $INSTALL_DIR/setup/shorten-log
+0 0 * * * root $INSTALL_DIR/rb-timer-update.py > /dev/null 2>&1
+5 0 * * * root $INSTALL_DIR/rb-rec-cleanup.py > /dev/null 2>&1
 10 0 * * * root rm /var/lib/minidlna/files.db > /dev/null 2>&1 ; /etc/init.d/minidlna restart > /dev/null 2>&1
 #
 EOF
@@ -153,9 +157,9 @@ EOF
 # Grant sudo rights to user www-data
 
 cat >> /etc/sudoers << EOF
-www-data ALL=NOPASSWD:/home/pi/radiobeere/rb-timer-update.py
-www-data ALL=NOPASSWD:/home/pi/radiobeere/rb-rec-cleanup.py
-www-data ALL=NOPASSWD:/home/pi/radiobeere/podcast.py
-www-data ALL=NOPASSWD:/home/pi/radiobeere/setup/update-radiobeere
+www-data ALL=NOPASSWD:$INSTALL_DIR/rb-timer-update.py
+www-data ALL=NOPASSWD:$INSTALL_DIR/rb-rec-cleanup.py
+www-data ALL=NOPASSWD:$INSTALL_DIR/podcast.py
+www-data ALL=NOPASSWD:$INSTALL_DIR/setup/update-radiobeere
 www-data ALL=NOPASSWD:/sbin/reboot
 EOF

@@ -37,14 +37,14 @@ Now it's time to get the RadioBeere software on your machine:
 
 cd /home/pi
 
-git clone http://github.com/Terminal-Geek/radiobeere.git
+git clone http://github.com/caveman99/radiobeere.git
 
 
 - 4 -
 
 Call the setup script and lay back.
 
-cd /home/pi/radiobeere/setup
+cd radiobeere/setup
 
 sudo ./setup
 
@@ -64,8 +64,9 @@ The installation may take some time. Just get a fresh cup of coffee.
 - 5 -
 
 After installation, you may want to enable the automatic deletion feature for old
-recordings. This requires the database migration to be run:
+recordings. This requires the database migration to be run (adjust the path to match
+your installation directory):
 
-sudo mysql -u radiobeere -p radiobeere < /radiobeere/setup/add_auto_delete_settings.sql
+sudo mysql -u radiobeere -p radiobeere < ~/radiobeere/setup/add_auto_delete_settings.sql
 
-See /radiobeere/setup/AUTO_DELETE_README.md for detailed configuration instructions.
+See setup/AUTO_DELETE_README.md in your installation directory for detailed configuration instructions.
