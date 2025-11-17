@@ -159,7 +159,17 @@
                     $monat = (substr($row->datum,5,2));
                     $jahr = (substr($row->datum,0,4));
                     $uhrzeit = (substr($row->uhrzeit,0,5));
-                    echo "<b>$row->sender - $tag.$monat.$jahr - $uhrzeit Uhr ($row->laenge)</b><br>";
+
+                    // Determine file type for display
+                    $file_extension = strtolower(pathinfo($row->datei, PATHINFO_EXTENSION));
+                    $format_badge = "";
+                    if ($file_extension == "m4a") {
+                        $format_badge = " <span style=\"font-size:0.8em; color:#666;\">[AAC]</span>";
+                    } elseif ($file_extension == "mp3") {
+                        $format_badge = " <span style=\"font-size:0.8em; color:#666;\">[MP3]</span>";
+                    }
+
+                    echo "<b>$row->sender - $tag.$monat.$jahr - $uhrzeit Uhr ($row->laenge)$format_badge</b><br>";
                     echo "<a href=\"/content/Aufnahmen/$row->datei\" target=\"_blank\" class=\"ui-btn ui-icon-audio ui-btn-icon-left ui-btn-inline ui-corner-all ui-shadow\">Abspielen</a>";
                     echo "<button data-icon=\"delete\" data-iconpos=\"left\" data-inline=\"true\" name=\"del[]\" value=\"$row->id\" id=\"$row->id\">L&ouml;schen</button>";
                     echo "<br><br>";

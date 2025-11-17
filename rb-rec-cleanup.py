@@ -9,19 +9,23 @@ import os
 import login
 
 
-FILENAME_PATTERN = '/var/www/content/Aufnahmen/*.mp3'
+FILENAME_PATTERNS = [
+    '/var/www/content/Aufnahmen/*.mp3',
+    '/var/www/content/Aufnahmen/*.m4a'
+]
 PATH_RECORDINGS = '/var/www/content/Aufnahmen/'
 
 
 def delete_files_without_db_entry(cursor):
 
-    for full_path in glob(FILENAME_PATTERN):
-        filename = os.path.basename(full_path)
-        db_request = 'SELECT COUNT(*) FROM aufnahmen WHERE datei = %s'
-        cursor.execute(db_request, (filename,))
-        check = cursor.fetchone()[0]
-        if check == 0:
-            os.remove(full_path)
+    for pattern in FILENAME_PATTERNS:
+        for full_path in glob(pattern):
+            filename = os.path.basename(full_path)
+            db_request = 'SELECT COUNT(*) FROM aufnahmen WHERE datei = %s'
+            cursor.execute(db_request, (filename,))
+            check = cursor.fetchone()[0]
+            if check == 0:
+                os.remove(full_path)
 
 
 def delete_db_entries_without_file(connection, cursor):
