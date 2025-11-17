@@ -1,0 +1,7 @@
+# Installation-specific config files
+var/www/include/install-path.conf
+
+# Database credentials (configured during setup)
+login.py
+setup/radiobeere.sql
+var/www/include/db-connect.php
