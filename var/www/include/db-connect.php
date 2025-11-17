@@ -1,4 +1,8 @@
 <?php
+// Dynamisch ermitteltes Installationsverzeichnis
+// db-connect.php liegt in var/www/include/, also 3 Ebenen unter dem Hauptverzeichnis
+define('RADIOBEERE_INSTALL_DIR', dirname(dirname(dirname(__FILE__))));
+
 $verbindung = mysqli_connect("localhost","radiobeere","password");
 
 if (!$verbindung) {

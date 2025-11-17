@@ -44,7 +44,7 @@
 
                         if ($speichern == "save") {
                             setSettings($verbindung, $fqdn, $prot, $auto_delete_enabled, $auto_delete_months);
-                            exec("sudo /radiobeere/podcast.py all");
+                            exec("sudo " . RADIOBEERE_INSTALL_DIR . "/podcast.py all");
                         }
 
                         // Display basic settings (FQDN and Protokoll)
@@ -96,7 +96,7 @@
             if($_POST['update'] == "true")
                 {
                 echo "<p><strong>Die Software wird nun aktualisiert ...</strong></p>";
-                exec("sudo /radiobeere/setup/update-radiobeere");
+                exec("sudo " . RADIOBEERE_INSTALL_DIR . "/setup/update-radiobeere");
                 $logfile = file("radiobeere-update.log");
                 foreach ($logfile AS $logfile_output)
                     {
@@ -106,7 +106,7 @@
                 unset($_POST);
                 }
 
-            $version_url = "https://raw.githubusercontent.com/moppi4483/radiobeere/master/var/www/version.txt";
+            $version_url = "https://raw.githubusercontent.com/caveman99/radiobeere/master/var/www/version.txt";
             $version_remote = file_get_contents($version_url);
             $version_file = fopen("version.txt","r");
             $version_local = fgets($version_file);

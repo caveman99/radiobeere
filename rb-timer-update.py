@@ -9,6 +9,8 @@ import time
 import login
 
 
+# Dynamisch ermitteltes Installationsverzeichnis
+INSTALL_DIR = os.path.dirname(os.path.abspath(__file__))
 PATH_RECORDINGS = '/var/www/content/Aufnahmen'
 MUTE_ERRORS = '> /dev/null 2>&1'
 
@@ -75,9 +77,10 @@ def create_cron_entry(cursor, db_record):
                         + '/aufnahme_fertig_'
                         + db_record[3]
                         + '* ;',
-                '/radiobeere/rb-rec-add.py',
+                os.path.join(INSTALL_DIR, 'rb-rec-add.py'),
                 MUTE_ERRORS,
-                '; /radiobeere/podcast.py',
+                ';',
+                os.path.join(INSTALL_DIR, 'podcast.py'),
                 db_record[3],
                 MUTE_ERRORS
                 ]

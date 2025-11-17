@@ -86,7 +86,7 @@
         <?php
         $eintrag = "INSERT INTO timer (sender, alias, stunde, minute, wochentage, dauer, tag, monat, zeitstempel) VALUES ('$sender', '$alias', '$stunde', '$minute', '$wochentage', '$sekunden', '$tag', '$monat', '$zeitstempel');";
         $eintragen = mysqli_query($verbindung, $eintrag);
-        exec("sudo /radiobeere/rb-timer-update.py");
+        exec("sudo " . RADIOBEERE_INSTALL_DIR . "/rb-timer-update.py");
         ?>
 
         <div data-role="main"
