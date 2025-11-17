@@ -93,8 +93,8 @@
                     $alias = strtolower(preg_replace("/\s+/", "", $sender));
                     $alias = preg_replace("/[^0-9a-zA-Z \-\_]/", "", $alias);
                     $loesch = mysqli_query($verbindung, $loeschen);
-                    exec("sudo /radiobeere/podcast.py $alias");
-                    exec("sudo /radiobeere/rb-rec-cleanup.py");
+                    exec("sudo " . RADIOBEERE_INSTALL_DIR . "/podcast.py $alias");
+                    exec("sudo " . RADIOBEERE_INSTALL_DIR . "/rb-rec-cleanup.py");
                     }
                 unset($del);
                 //echo "<script type=\"text/javascript\">window.location.reload(true);</script>";

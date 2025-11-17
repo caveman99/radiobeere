@@ -44,7 +44,7 @@
                     $loeschen = "DELETE FROM timer WHERE id = $eintrag";
                     $loesch = mysqli_query($verbindung, $loeschen);
                     }
-                exec("sudo /radiobeere/rb-timer-update.py");
+                exec("sudo " . RADIOBEERE_INSTALL_DIR . "/rb-timer-update.py");
                 unset($del);
                 }
             ?>

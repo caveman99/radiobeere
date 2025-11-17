@@ -8,10 +8,10 @@ Diese Funktion ermöglicht es, alte Radioaufnahmen automatisch nach einer konfig
 
 ### 1. Datenbankeinstellungen hinzufügen
 
-Führen Sie das SQL-Migrationsskript aus:
+Führen Sie das SQL-Migrationsskript aus (passen Sie den Pfad an Ihr Installationsverzeichnis an):
 
 ```bash
-mysql -u radiobeere -p radiobeere < /radiobeere/setup/add_auto_delete_settings.sql
+mysql -u radiobeere -p radiobeere < ~/radiobeere/setup/add_auto_delete_settings.sql
 ```
 
 Oder melden Sie sich bei MySQL an und führen Sie die Befehle manuell aus:
@@ -71,10 +71,10 @@ Um die automatische Löschung zu deaktivieren:
 
 ## Manuelle Ausführung
 
-Sie können das Cleanup-Skript auch manuell ausführen:
+Sie können das Cleanup-Skript auch manuell ausführen (passen Sie den Pfad an Ihr Installationsverzeichnis an):
 
 ```bash
-sudo /radiobeere/rb-rec-cleanup.py
+sudo ~/radiobeere/rb-rec-cleanup.py
 ```
 
 Dies führt alle Bereinigungsfunktionen aus, einschließlich des Löschens alter Aufnahmen (falls aktiviert).

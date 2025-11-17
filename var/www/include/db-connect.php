@@ -1,4 +1,14 @@
 <?php
+// Installationsverzeichnis aus Config-Datei lesen
+// (geschrieben während der Installation, da bind mount die Pfadermittlung verhindert)
+$config_file = __DIR__ . '/install-path.conf';
+if (file_exists($config_file)) {
+    define('RADIOBEERE_INSTALL_DIR', trim(file_get_contents($config_file)));
+} else {
+    // Fallback: Versuche den Pfad zu ermitteln (funktioniert ohne bind mount)
+    define('RADIOBEERE_INSTALL_DIR', dirname(dirname(dirname(__FILE__))));
+}
+
 $verbindung = mysqli_connect("localhost","radiobeere","password");
 
 if (!$verbindung) {
