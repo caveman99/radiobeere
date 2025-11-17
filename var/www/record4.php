@@ -62,7 +62,7 @@
             {
             $tag = "*";
             $monat = "*";
-            $zeitstempel = "";
+            $zeitstempel = 0;
             $klarnamen = array("Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag");
             $i = "0";
             while($i < 7)

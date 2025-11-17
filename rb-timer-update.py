@@ -71,7 +71,7 @@ def create_cron_entry(cursor, db_record):
                         + db_record[3]
                         + '/\'',
                 PATH_RECORDINGS
-                        + '/*.mp3 ;',
+                        + '/*.* ;',
                 'chmod 777',
                 PATH_RECORDINGS
                         + '/aufnahme_fertig_'
