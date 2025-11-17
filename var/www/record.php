@@ -33,7 +33,7 @@
         $loesch = mysqli_query($verbindung, $loeschen);
         $reset = "0";
         }
-    exec("sudo /radiobeere/rb-timer-update.py");
+    exec("sudo " . RADIOBEERE_INSTALL_DIR . "/rb-timer-update.py");
     ?>
 
     <div data-role="page"
