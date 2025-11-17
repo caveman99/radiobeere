@@ -34,15 +34,17 @@ ON DUPLICATE KEY UPDATE name=name;
 
 Das Auto-Delete-Feature benötigt das `python-dateutil` Paket:
 
+**Debian/Ubuntu/Raspbian:**
+```bash
+sudo apt-get install python-dateutil
+```
+
+**Alternative mit pip:**
 ```bash
 sudo pip install python-dateutil
 ```
 
-Oder unter Debian/Ubuntu:
-
-```bash
-sudo apt-get install python-dateutil
-```
+**Hinweis:** Bei Neuinstallationen ab diesem Update wird `python-dateutil` automatisch vom Setup-Skript installiert.
 
 ### 3. Konfiguration in der Web-Oberfläche
 

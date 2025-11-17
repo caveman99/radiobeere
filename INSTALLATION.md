@@ -59,3 +59,13 @@ one preferably). You'll be asked for it later during the installation process.
 When asked for a password for a UNIX user, just wait 5 seconds and don't do anything.
 
 The installation may take some time. Just get a fresh cup of coffee.
+
+
+- 5 -
+
+After installation, you may want to enable the automatic deletion feature for old
+recordings. This requires the database migration to be run:
+
+sudo mysql -u radiobeere -p radiobeere < /radiobeere/setup/add_auto_delete_settings.sql
+
+See /radiobeere/setup/AUTO_DELETE_README.md for detailed configuration instructions.
