@@ -43,8 +43,19 @@ function getProtokoll($verb) {
 }
 
 
-function setSettings($verb, $fqdn, $prot) {
-        $abfrage = "INSERT INTO settings (name, wert) VALUES('FQDN', '" . $fqdn . "'), ('Protokoll', '" . $prot . "') ON DUPLICATE KEY UPDATE wert=VALUES(wert);";
+function setSettings($verb, $fqdn, $prot, $auto_delete_enabled = null, $auto_delete_months = null) {
+        $values = array();
+        $values[] = "('FQDN', '" . mysqli_real_escape_string($verb, $fqdn) . "')";
+        $values[] = "('Protokoll', '" . mysqli_real_escape_string($verb, $prot) . "')";
+
+        if ($auto_delete_enabled !== null) {
+                $values[] = "('auto_delete_enabled', '" . mysqli_real_escape_string($verb, $auto_delete_enabled) . "')";
+        }
+        if ($auto_delete_months !== null) {
+                $values[] = "('auto_delete_months', '" . mysqli_real_escape_string($verb, $auto_delete_months) . "')";
+        }
+
+        $abfrage = "INSERT INTO settings (name, wert) VALUES " . implode(', ', $values) . " ON DUPLICATE KEY UPDATE wert=VALUES(wert);";
         try {
                 if(!mysqli_query($verb, $abfrage)) {
                         throw new Exception(mysqli_error($verb));
@@ -55,7 +66,18 @@ function setSettings($verb, $fqdn, $prot) {
         catch (Exception $e) {
                 echo $e -> getMessage();
         }
-  
+
   return $ergebnis;
+}
+
+
+function getSetting($verb, $name, $default = '') {
+        $value = $default;
+        $abfrage = "SELECT wert FROM settings WHERE name = '" . mysqli_real_escape_string($verb, $name) . "';";
+        $ergebnis = mysqli_query($verb, $abfrage);
+        if ($ergebnis && $row = mysqli_fetch_object($ergebnis)) {
+                $value = $row->wert;
+        }
+        return $value;
 }
 ?>

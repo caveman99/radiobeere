@@ -30,21 +30,25 @@
         <div data-role="main"
              class="ui-content">
             
-            <h2>Einstellungen<h2>
+            <h2>Einstellungen</h2>
                 <form method="post" id="verwalten_einstellungen" enctype="multipart/form-data">
                     <?php
                         include("include/db-connect.php");
-                    
+
                         $speichern = $_POST["speichern"];
                         $fqdn = $_POST["FQDN"];
                         $prot = $_POST["Protokoll"];
-                        
+                        // Checkbox value: if not set, default to "0"
+                        $auto_delete_enabled = isset($_POST["auto_delete_enabled"]) ? $_POST["auto_delete_enabled"] : "0";
+                        $auto_delete_months = $_POST["auto_delete_months"];
+
                         if ($speichern == "save") {
-                            setSettings($verbindung, $fqdn, $prot);
+                            setSettings($verbindung, $fqdn, $prot, $auto_delete_enabled, $auto_delete_months);
                             exec("sudo /radiobeere/podcast.py all");
                         }
 
-                        $abfrage = "SELECT * FROM settings;";
+                        // Display basic settings (FQDN and Protokoll)
+                        $abfrage = "SELECT * FROM settings WHERE name IN ('FQDN', 'Protokoll');";
                         $ergebnis = mysqli_query($verbindung, $abfrage);
                         while($row = mysqli_fetch_object($ergebnis)) {
                             echo "  <label for=\"" . $row->name . "\">" . $row->name . ":
@@ -52,6 +56,32 @@
                                     </label>\n";
                         }
                     ?>
+
+                    <h3>Automatisches Löschen alter Aufnahmen</h3>
+
+                    <?php
+                        $delete_enabled = getSetting($verbindung, 'auto_delete_enabled', '0');
+                        $delete_months = getSetting($verbindung, 'auto_delete_months', '3');
+                    ?>
+
+                    <fieldset data-role="controlgroup">
+                        <label for="auto_delete_enabled">
+                            <input type="checkbox" name="auto_delete_enabled" id="auto_delete_enabled" value="1" <?php echo ($delete_enabled == '1') ? 'checked' : ''; ?>>
+                            Alte Aufnahmen automatisch löschen
+                        </label>
+                    </fieldset>
+
+                    <label for="auto_delete_months">Aufnahmen löschen, die älter sind als:
+                        <select name="auto_delete_months" id="auto_delete_months">
+                            <option value="1" <?php echo ($delete_months == '1') ? 'selected' : ''; ?>>1 Monat</option>
+                            <option value="2" <?php echo ($delete_months == '2') ? 'selected' : ''; ?>>2 Monate</option>
+                            <option value="3" <?php echo ($delete_months == '3') ? 'selected' : ''; ?>>3 Monate</option>
+                            <option value="6" <?php echo ($delete_months == '6') ? 'selected' : ''; ?>>6 Monate</option>
+                            <option value="12" <?php echo ($delete_months == '12') ? 'selected' : ''; ?>>12 Monate</option>
+                            <option value="24" <?php echo ($delete_months == '24') ? 'selected' : ''; ?>>24 Monate</option>
+                        </select>
+                    </label>
+
                     <input type="hidden" name="speichern" id="speichern" value="save" />
                     <input type="submit" value="Einstellungen speichern" form="verwalten_einstellungen" />
                 </form>
