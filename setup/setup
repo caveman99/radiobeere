@@ -11,14 +11,14 @@ minidlna streamripper python-mysqldb python-dateutil
 
 # Download and install Mutagen
 
-cd /home/pi
+cd /tmp
 wget https://bitbucket.org/lazka/mutagen/downloads/mutagen-1.31.tar.gz
 tar -xf mutagen*.gz
 cd mutagen*
 ./setup.py build
 su -c "./setup.py install"
-cd /home/pi
-rm mutagen*.gz
+cd /tmp
+rm -rf mutagen*
 
 
 printf "Gib einen FQDN (oder IP-Adresse) an über den das Gerät erreichbar ist! Wenn keine Eingabe erfolgt wird der Hostname des Systems verwendet."
@@ -71,6 +71,8 @@ read antwort
 if [$antwort == "j"]
 then
   cat radiobeere.sql | mysql -u root -p
+  # Add auto-delete settings for retention feature
+  cat add_auto_delete_settings.sql | mysql -u root -p radiobeere
 fi
 
 # Create system and Samba user radiobeere
