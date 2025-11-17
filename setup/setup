@@ -86,6 +86,11 @@ useradd --no-create-home radiobeere
 mv ../var/www/* /var/www
 chmod 777 /var/www/img/podcast
 
+# Write install directory to config file for PHP
+# (needed because bind mount prevents dirname-based path detection)
+echo "$INSTALL_DIR" > /var/www/include/install-path.conf
+chmod 644 /var/www/include/install-path.conf
+
 # Link web root to RadioBeere directory
 
 echo "/var/www $INSTALL_DIR/var/www none bind 0 0" >> /etc/fstab
@@ -97,6 +102,7 @@ cd "$INSTALL_DIR"
 git update-index --assume-unchanged login.py
 git update-index --assume-unchanged setup/radiobeere.sql
 git update-index --assume-unchanged var/www/include/db-connect.php
+git update-index --assume-unchanged var/www/include/install-path.conf
 
 # Create Samba share
 
