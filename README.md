@@ -55,22 +55,26 @@ work. See the installation instructions for details.
 
 The frontend design is more or less responsive and thus can be used on small
 and big screens equally. You can store your own list of radio stations, only
-limited to streams, that streamripper can deal with. Once recorded, you can
-listen to your recordings in different ways:
+limited to streams, that streamripper can deal with. Recordings are supported
+in MP3 and AAC formats (.mp3, .m4a, .aac). Once recorded, you can listen to
+your recordings in different ways:
 
 1) The RadioBeere creates a podcast feed for each radio station, you store on
 your RadioBeere. So you can take your recordings with you and listen to
 them offline.
 
 2) The recordings are distributed within your LAN/Wifi network via a DLNA
-server (ReadyMedia/minidlna). 
+server (ReadyMedia/minidlna).
 
 3) The RadioBeere has a very simple web player, basically a browsable list of
-direct links to your mp3 files. 
+direct links to your audio files.
 
 4) The RadioBeere has Samba on board, so you can access your recordings just
 like any content on a network share within your (W)LAN. This is a nice feature
 for users of streaming clients like the SONOS players.
+
+5) Optional automatic deletion of old recordings after a configurable retention
+period (1-24 months) to manage storage space efficiently.
 
 
 LEGAL AND SECURITY CONSIDERATIONS
@@ -112,10 +116,14 @@ The RadioBeere makes use of the jQuery library:
 
 http://www.jquery.com
 
-The scripts written in Python are using the standard library, with one
-exception, the versatile tagging module Mutagen:
+The scripts written in Python are using the standard library, with a few
+additional modules:
 
+Mutagen (versatile audio tagging):
 http://mutagen.readthedocs.org
+
+python-dateutil (date/time handling for auto-delete feature):
+https://dateutil.readthedocs.io
 
 The calendar helping you programming your recordings is Amsuls nice
 Date Picker:

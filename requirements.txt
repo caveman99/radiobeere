@@ -1,0 +1,10 @@
+# Python dependencies for RadioBeere
+
+# Database connectivity
+mysqlclient
+
+# Audio file metadata handling
+mutagen>=1.31
+
+# Date/time utilities for auto-delete feature
+python-dateutil>=2.0

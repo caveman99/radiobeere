@@ -3,7 +3,7 @@
 # Install packages via package manager
 
 apt-get --yes install rename samba-common samba apache2 php mariadb-server php-mysql \
-minidlna streamripper python-mysqldb
+minidlna streamripper python-mysqldb python-dateutil
 
 # Download and install Mutagen
 

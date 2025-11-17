@@ -43,7 +43,7 @@ print"<?xml version='1.0' encoding='UTF-8'?>
 ";
 /**/
 // read all mp3 files in the directory
-$temp = glob("{*.mp3,*.m4a}", GLOB_BRACE);
+$temp = glob("{*.mp3,*.m4a,*.aac}", GLOB_BRACE);
 // create array with timestamp.filename as key
 foreach ($temp as $filename) {
   $mp3files[filemtime($filename).$filename] = $filename;
@@ -82,6 +82,7 @@ foreach ($mp3files as $filename) {
       $audiotype = "audio/mpeg";
       break;
     case "m4a":
+    case "aac":
       $audiotype = "audio/aac";
       break;
     default:

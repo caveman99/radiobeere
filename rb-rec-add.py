@@ -11,19 +11,35 @@ from email.utils import formatdate
 
 from mutagen.mp3 import MP3
 from mutagen.id3 import ID3, TIT2, TPE1, TALB, APIC
+from mutagen.mp4 import MP4, MP4Cover
 
 import login
 
 
-FILENAME_PATTERN = '/var/www/content/Aufnahmen/aufnahme_fertig_*.mp3'
+FILENAME_PATTERNS = [
+    '/var/www/content/Aufnahmen/aufnahme_fertig_*.mp3',
+    '/var/www/content/Aufnahmen/aufnahme_fertig_*.m4a',
+    '/var/www/content/Aufnahmen/aufnahme_fertig_*.aac'
+]
 DATE_TIME_FORMAT = '%Y_%m_%d_%H_%M_%S'
 PODCAST_IMG_PATH = '/var/www/content/img/podcast/'
 
 
 def audio_length(filename):
 
+    # Determine file type and use appropriate mutagen class
+    _, extension = os.path.splitext(filename)
+    extension = extension.lower()
+
+    if extension == '.mp3':
+        audio = MP3(filename)
+    elif extension in ['.m4a', '.aac']:
+        audio = MP4(filename)
+    else:
+        raise ValueError('Unsupported file format: {}'.format(extension))
+
     length = str(
-        datetime.timedelta(seconds=int((MP3(filename)).info.length))
+        datetime.timedelta(seconds=int(audio.info.length))
     )
     length_bytes = os.path.getsize(filename)
 
@@ -56,32 +72,49 @@ def get_station_name(connection, station_alias):
         return row[0]
 
 
-def id3_tag(path, station, station_alias, recording_time):
+def add_metadata_tags(path, station, station_alias, recording_time):
 
     podcast_img = PODCAST_IMG_PATH + station_alias + '.jpg'
     if os.path.isfile(podcast_img) is False:
         podcast_img = PODCAST_IMG_PATH + 'default.jpg'
 
-    audio = ID3()
-    audio.save(path)
-    audio = ID3(path)
-    audio.add(TIT2(
-            encoding=3, text='{0}, {1:%d.%m.%Y, %H:%M} Uhr'.format(
-            station, recording_time))
-    )
-    audio.add(TPE1(encoding=3, text=station))
-    audio.add(TALB(encoding=3, text='{0:%Y-%m-%d}'.format(recording_time)))
+    # Determine file type
+    _, extension = os.path.splitext(path)
+    extension = extension.lower()
 
-    audio.add(APIC(
-            encoding = 3,
-            mime = 'image/jpeg',
-            type = 3,
-            desc = u'Cover',
-            data = open(podcast_img, 'rb').read()
-            )
-    )
+    title = '{0}, {1:%d.%m.%Y, %H:%M} Uhr'.format(station, recording_time)
+    album = '{0:%Y-%m-%d}'.format(recording_time)
 
-    audio.save(v2_version=3)
+    if extension == '.mp3':
+        # ID3 tags for MP3
+        audio = ID3()
+        audio.save(path)
+        audio = ID3(path)
+        audio.add(TIT2(encoding=3, text=title))
+        audio.add(TPE1(encoding=3, text=station))
+        audio.add(TALB(encoding=3, text=album))
+        audio.add(APIC(
+                encoding = 3,
+                mime = 'image/jpeg',
+                type = 3,
+                desc = u'Cover',
+                data = open(podcast_img, 'rb').read()
+                )
+        )
+        audio.save(v2_version=3)
+
+    elif extension in ['.m4a', '.aac']:
+        # MP4 tags for M4A/AAC
+        audio = MP4(path)
+        audio['\xa9nam'] = title  # Title
+        audio['\xa9ART'] = station  # Artist
+        audio['\xa9alb'] = album  # Album
+
+        # Add cover art
+        with open(podcast_img, 'rb') as img:
+            audio['covr'] = [MP4Cover(img.read(), imageformat=MP4Cover.FORMAT_JPEG)]
+
+        audio.save()
 
 
 def write_to_db(connection, recording_time, station,
@@ -109,26 +142,27 @@ def main():
             login.DB_HOST, login.DB_USER,
             login.DB_PASSWORD, login.DB_DATABASE)) as connection:
 
-        for path in glob(FILENAME_PATTERN):
+        for pattern in FILENAME_PATTERNS:
+            for path in glob(pattern):
 
-            directory = os.path.dirname(path)
-            filename, extension = os.path.splitext(os.path.basename(path))
+                directory = os.path.dirname(path)
+                filename, extension = os.path.splitext(os.path.basename(path))
 
-            station_alias, recording_time = extract_metadata(filename)
-            station = get_station_name(connection, station_alias)
-            new_filename = '{0}_{1:%Y-%m-%d}_{1:%H-%M}{2}'.format(
-                    station_alias, recording_time, extension
-            )
+                station_alias, recording_time = extract_metadata(filename)
+                station = get_station_name(connection, station_alias)
+                new_filename = '{0}_{1:%Y-%m-%d}_{1:%H-%M}{2}'.format(
+                        station_alias, recording_time, extension
+                )
 
-            id3_tag(path, station, station_alias, recording_time)
+                add_metadata_tags(path, station, station_alias, recording_time)
 
-            length, length_bytes = audio_length(path)
+                length, length_bytes = audio_length(path)
 
-            write_to_db(
-                    connection, recording_time, station,
-                    new_filename, length, length_bytes
-            )
-            os.rename(path, (os.path.join(directory, new_filename)))
+                write_to_db(
+                        connection, recording_time, station,
+                        new_filename, length, length_bytes
+                )
+                os.rename(path, (os.path.join(directory, new_filename)))
 
 
 if __name__ == '__main__':
