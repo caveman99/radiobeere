@@ -56,8 +56,9 @@ work. See the installation instructions for details.
 The frontend design is more or less responsive and thus can be used on small
 and big screens equally. You can store your own list of radio stations, only
 limited to streams, that streamripper can deal with. Recordings are supported
-in MP3 and AAC formats (.mp3, .m4a, .aac). Once recorded, you can listen to
-your recordings in different ways:
+in MP3 and AAC formats (.mp3, .m4a, .aac). Note: Metadata tagging is supported
+for .mp3 and .m4a files; raw .aac files don't support embedded metadata tags.
+Once recorded, you can listen to your recordings in different ways:
 
 1) The RadioBeere creates a podcast feed for each radio station, you store on
 your RadioBeere. So you can take your recordings with you and listen to

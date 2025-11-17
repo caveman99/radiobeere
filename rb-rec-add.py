@@ -12,6 +12,7 @@ from email.utils import formatdate
 from mutagen.mp3 import MP3
 from mutagen.id3 import ID3, TIT2, TPE1, TALB, APIC
 from mutagen.mp4 import MP4, MP4Cover
+from mutagen.aac import AAC
 
 import login
 
@@ -33,8 +34,10 @@ def audio_length(filename):
 
     if extension == '.mp3':
         audio = MP3(filename)
-    elif extension in ['.m4a', '.aac']:
+    elif extension == '.m4a':
         audio = MP4(filename)
+    elif extension == '.aac':
+        audio = AAC(filename)
     else:
         raise ValueError('Unsupported file format: {}'.format(extension))
 
@@ -74,13 +77,19 @@ def get_station_name(connection, station_alias):
 
 def add_metadata_tags(path, station, station_alias, recording_time):
 
-    podcast_img = PODCAST_IMG_PATH + station_alias + '.jpg'
-    if os.path.isfile(podcast_img) is False:
-        podcast_img = PODCAST_IMG_PATH + 'default.jpg'
-
     # Determine file type
     _, extension = os.path.splitext(path)
     extension = extension.lower()
+
+    # Raw AAC files (.aac) don't support metadata tags
+    # Only MP3 and M4A (AAC in MP4 container) support tags
+    if extension == '.aac':
+        # Skip metadata tagging for raw AAC files
+        return
+
+    podcast_img = PODCAST_IMG_PATH + station_alias + '.jpg'
+    if os.path.isfile(podcast_img) is False:
+        podcast_img = PODCAST_IMG_PATH + 'default.jpg'
 
     title = '{0}, {1:%d.%m.%Y, %H:%M} Uhr'.format(station, recording_time)
     album = '{0:%Y-%m-%d}'.format(recording_time)
@@ -103,8 +112,8 @@ def add_metadata_tags(path, station, station_alias, recording_time):
         )
         audio.save(v2_version=3)
 
-    elif extension in ['.m4a', '.aac']:
-        # MP4 tags for M4A/AAC
+    elif extension == '.m4a':
+        # MP4 tags for M4A (AAC in MP4 container)
         audio = MP4(path)
         audio['\xa9nam'] = title  # Title
         audio['\xa9ART'] = station  # Artist
